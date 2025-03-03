@@ -20,8 +20,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering",
 ]
-# requires-python = ">=3.7, <3.11"
-
+requires-python = ">=3.8"
 dependencies = [
     "lazyfmri @ git+https://github.com/gjheij/lazyfmri.git",
     "fmriproc @ git+https://github.com/gjheij/fmriproc.git",
