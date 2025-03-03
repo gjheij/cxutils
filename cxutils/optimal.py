@@ -29,7 +29,7 @@ def set_threshold(name=None, borders=None, set_default=None):
 
     """set_threshold
 
-    This function is utilized in call_pycortex2 to fetch the thresholds for multiple properties including pRF-parameters
+    This function is utilized in call_targetvertex to fetch the thresholds for multiple properties including pRF-parameters
     (eccentricity, r2, and polar angle), and structural (surface) properties such as cortical thickness and sulcal depth. To
     make verbosity nicer, you can specify a 'name' to print to the terminal what kind of property is being processed. Then,
     you can specify a range where the user input should fall in (default is None to not force a specific range). You can also

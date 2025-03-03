@@ -305,7 +305,7 @@ class SavePycortexViews():
 
     Example
     ----------
-    >>> from linescanning import pycortex
+    >>> from cxutils import pycortex
     >>> import numpy as np
     >>> # let's say your have statistical maps with the correct dimensions called 'data' for subject 'sub-xx'
     >>> subject = "sub-xx"
@@ -806,7 +806,7 @@ class Vertex2D_fix():
 
     Example
     ----------
-    >>> from linescanning import pycortex
+    >>> from cxutils import pycortex
     >>> import numpy as np
     >>> # let's say your have statistical maps with the correct dimensions called 'data' for subject 'sub-xx'
     >>> subject = "sub-xx"
