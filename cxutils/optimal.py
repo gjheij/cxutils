@@ -168,11 +168,7 @@ class SurfaceCalc(object):
 
         if self.import_subj:
             # import subject from freesurfer (will have the same names)
-            cortex.freesurfer.import_subj(
-                fs_subject=self.subject,
-                cx_subject=self.subject,
-                freesurfer_subject_dir=self.fs_dir,
-                whitematter_surf='smoothwm')
+            pycortex.import_subj(self.subject, freesurfer_subject_dir=self.fs_dir)
         
         # reload database after import
         cortex.db.reload_subjects()
@@ -884,11 +880,7 @@ class pRFCalc():
                         os.makedirs(ctx_path, exist_ok=True)
 
                     if not os.path.exists(opj(ctx_path, self.subject)):
-                        cortex.freesurfer.import_subj(
-                            fs_subject=self.subject,
-                            cx_subject=self.subject,
-                            freesurfer_subject_dir=self.fs_dir,
-                            whitematter_surf='smoothwm')
+                        pycortex.import_subj(self.subject, freesurfer_subject_dir=self.fs_dir)
 
                     # make object for r2
                     self.r2_v = pycortex.Vertex2D_fix(

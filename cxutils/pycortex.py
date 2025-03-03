@@ -21,6 +21,12 @@ import matplotlib as mpl
 from typing import Union
 opj = os.path.join
 
+def import_subj(subject, **kwargs):
+    cortex.freesurfer.import_subj(
+        subject,
+        **kwargs
+    )
+
 def set_ctx_path(p=None, opt="update"):
     """set_ctx_path
 
@@ -839,6 +845,7 @@ class Vertex2D_fix():
         roi_borders: np.ndarray=None,
         curv_type: str="hcp",
         fc: float=-1.25,
+        import_kws: dict={},
         **kwargs):
 
         self.data1 = data1
@@ -852,6 +859,7 @@ class Vertex2D_fix():
         self.roi_borders = roi_borders
         self.curv_type = curv_type
         self.fc = fc
+        self.import_kws = import_kws
 
         if not isinstance(self.subject, str):
             raise ValueError("Please specify the subject ID as per pycortex' filestore naming")
@@ -859,11 +867,7 @@ class Vertex2D_fix():
         self.ctx_path = opj(cortex.database.default_filestore, self.subject)
         if not os.path.exists(self.ctx_path):
             # import subject from freesurfer (will have the same names)
-            cortex.freesurfer.import_subj(
-                fs_subject=self.subject,
-                cx_subject=self.subject,
-                freesurfer_subject_dir=os.environ.get("SUBJECTS_DIR"),
-                whitematter_surf='smoothwm')
+            import_subj(subject, **self.import_kws)
         
         # reload database after import
         cortex.db.reload_subjects()
