@@ -20,9 +20,6 @@ import os
 import pandas as pd
 from scipy import stats
 from typing import Union
-import warnings
-
-warnings.filterwarnings('ignore')
 opj = os.path.join
 
 def set_threshold(name=None, borders=None, set_default=None):
@@ -1165,7 +1162,7 @@ class CalcBestVertex():
             Threshold is specified as 'greater than <value>'.
         srf: bool, optional
             Select vertex based on size-response function (SRF) properties. For now it maximizes suppression
-        srf_file: str, optional
+        srf-file: str, optional
             Specify a precomputed dataframe with SRFs
 
         Returns
@@ -1432,7 +1429,7 @@ class CalcBestVertex():
         if hasattr(self, 'prf'):
             if srf:
 
-                if not isinstance(srf_file, str):
+                if not isinstance(srf-file, str):
                     utils.verbose("Calculating SRFs for surviving vertices", True)
                     tmp_init = np.zeros_like(self.prf.df_prf)
                     self.df_for_srfs = pd.DataFrame(
@@ -2574,7 +2571,8 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
 
             if isinstance(self.out, str):
                 self.write_line_pycortex(save_as=self.out)
-                utils.verbose(f" writing {self.out}", self.verbose)
+                txt = "writing "+utils.color.BOLD+utils.color.GREEN+self.out+utils.color.END 
+                utils.verbose(txt, self.verbose)
 
             #----------------------------------------------------------------------------------------------------------------
             # Get pRF-parameters from best vertices
@@ -2622,7 +2620,8 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
 
                         if isinstance(self.out, str):
                             self.final_df.to_csv(self.prf_bestvertex, index=False)
-                            utils.verbose(f" writing {self.prf_bestvertex}", self.verbose)
+                            txt = "writing "+utils.color.BOLD+utils.color.GREEN+self.prf_bestvertex+utils.color.END 
+                            utils.verbose(txt, self.verbose)
                             # utils.verbose(f"Now run 'call_sizeresponse -s {self.subject} --verbose {v1_flag}' to obtain DN-parameters", self.verbose)
 
             utils.verbose("Done", self.verbose)
