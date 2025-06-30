@@ -1,17 +1,17 @@
 import json
 # pylint: disable=no-member,E1130,E1137
 import cortex
-from datetime import datetimeime import datetime
+from datetime import datetime
 from lazyfmri import (
     utils,
     plotting,
     dataset, 
-    )
+)
 from fmriproc import(
     prf,
     planning,
     transform,
-))
+)
 import os
 import numpy as np
 import pandas as pd
@@ -1429,7 +1429,7 @@ class CalcBestVertex():
         if hasattr(self, 'prf'):
             if srf:
 
-                if not isinstance(srf-file, str):
+                if not isinstance(srf_file, str):
                     utils.verbose("Calculating SRFs for surviving vertices", True)
                     tmp_init = np.zeros_like(self.prf.df_prf)
                     self.df_for_srfs = pd.DataFrame(
