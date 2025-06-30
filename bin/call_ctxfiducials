@@ -51,7 +51,7 @@ Example:
 
     if not fs_dir:
         try:
-            fs_dir = os.environ['SUBJECTS_DIR']
+            fs_dir = os.environ.get('SUBJECTS_DIR')
         except:
             raise ValueError("SUBJECTS_DIR is empty and no other FreeSurfer-directory is specified")
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-import nibabel as nb
 import numpy as np
+import nibabel as nb
 
 try:
     from cxutils.pycortex import get_ctxsurfmove
@@ -40,9 +40,8 @@ Example:
     """
 
     if len(argv) < 2:
-        print("NOT ENOUGH ARGUMENTS SPECIFIED")
         print(main.__doc__)
-        sys.exit(1)
+        sys.exit()
 
     try:
         subject = argv[0]

@@ -6,6 +6,7 @@ try:
 except ImportError:
     print("Could not import cxutils. Please install from https://github.com/gjheij/cxutils")
 
+from lazyfmri import utils
 opj = os.path.join
 ose = os.path.exists
 
@@ -71,7 +72,7 @@ Example:
     print(f"Filestore: {ctx_dir}")
     if overwrite:
         if ose(opj(ctx_dir, subject)):
-            os.system(f'rm -r {opj(ctx_dir, subject)}')
+            utils.run_shell_wrapper(f'rm -r {opj(ctx_dir, subject)}')
             
     if not ose(opj(ctx_dir, subject)):
         if ose(opj(fs_dir, subject)):

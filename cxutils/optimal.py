@@ -1,25 +1,25 @@
+import json
 # pylint: disable=no-member,E1130,E1137
 import cortex
-from datetime import datetime
-import json
+from datetime import datetimeime import datetime
 from lazyfmri import (
+    utils,
     plotting,
     dataset, 
-    utils,
     )
 from fmriproc import(
+    prf,
     planning,
     transform,
-    prf
-)
-from cxutils import pycortex
-import matplotlib.pyplot as plt
-import nibabel as nb
-import numpy as np
+))
 import os
+import numpy as np
 import pandas as pd
+import nibabel as nb
 from scipy import stats
 from typing import Union
+from cxutils import pycortex
+import matplotlib.pyplot as plt
 opj = os.path.join
 
 def set_threshold(name=None, borders=None, set_default=None):
@@ -136,7 +136,7 @@ class SurfaceCalc(object):
 
         # check if we need to reload kernel to activate changes to filestore
         if os.environ.get("PROJECT") not in self.ctx_path:
-            os.system('call_ctxfilestore update')
+            utils.run_shell_wrapper('call_ctxfilestore update', verb=True)
             import importlib
             importlib.reload(cortex)
 
@@ -1033,7 +1033,7 @@ class CalcBestVertex():
             verbose=self.verbose,
             aparc=self.aparc)
 
-        if self.prf_file != None:
+        if self.prf_file is not None:
             self.prf_dir = os.path.dirname(self.prf_file)
             self.prf = pRFCalc(
                 subject=self.subject, 
@@ -1534,7 +1534,7 @@ class CalcBestVertex():
             self.curv_both.append(curv)
 
         self.curv_both = np.concatenate(self.curv_both)
-        indices = np.where(self.joint_mask == True)[0]
+        indices = np.where(self.joint_mask)[0]
         self.mask_by_curv[indices] = self.curv_both[indices]
 
         self.mask_by_curv_v = pycortex.Vertex2D_fix(
@@ -1570,7 +1570,7 @@ class CalcBestVertex():
                     surf = getattr(self.surface, f'{i}_surf_data')
 
                     # get all vertices where mask = True
-                    vv = np.where(mask == True)[0]
+                    vv = np.where(mask)[0]
                     curv_dict = {}
                     for pp in vv:                      
                         curv_dict[pp] = curv[pp]
@@ -1712,9 +1712,9 @@ class CalcBestVertex():
                         self.label_files.append(out_f)
                         nb.freesurfer.io.write_morph_data(out_f, getattr(self, f"{hemi}_final_mask"))
 
-                    cmd = f"freeview -v {self.orig} -f {self.lh_fid}:edgecolor=green:overlay={self.label_files[0]} {self.rh_fid}:edgecolor=green:overlay={self.label_files[1]} {opj(output_dir, 'lh.inflated')}:edgecolor=blue:overlay={self.label_files[0]} {opj(output_dir, 'rh.inflated')}:edgecolor=blue:overlay={self.label_files[1]} 2>/dev/null &"
+                    cmd = f"launch_freeview -v {self.orig} -f {self.lh_fid}:edgecolor=green:overlay={self.label_files[0]} {self.rh_fid}:edgecolor=green:overlay={self.label_files[1]} {opj(output_dir, 'lh.inflated')}:edgecolor=blue:overlay={self.label_files[0]} {opj(output_dir, 'rh.inflated')}:edgecolor=blue:overlay={self.label_files[1]} 2>/dev/null &"
 
-                    os.system(cmd)
+                    utils.run_shell_wrapper(cmd, verb=True)
                 
                 # fetch vertices
                 self.srfs_best_vertices = []
@@ -1950,7 +1950,7 @@ class CalcBestVertex():
 
                 raise TypeError("Missing attributes. Need the curvature data and best vertex index")
 
-        if concat == True:
+        if concat:
 
             both = np.copy(self.lh_best_vertex_map)
             both[np.where(self.rh_best_vertex_map == 1)] = 1
@@ -1967,7 +1967,7 @@ class CalcBestVertex():
             else:
                 self.data_dict = {"targets": self.lr_best_vertex_map_v}
 
-        if write_files == True:
+        if write_files:
 
             for i in ['lh', 'rh']:
                 if hasattr(self, f'{i}_best_vertex_map_sm'):
@@ -2022,7 +2022,7 @@ class CalcBestVertex():
 
                 raise TypeError("Missing attributes. Need the curvature data and best vertex index")
 
-        if concat == True:
+        if concat:
 
             sm_bestvertex_LR = np.concatenate((self.lh_best_vertex_map_sm,self.rh_best_vertex_map_sm), axis=0)
             sm_bestvertex_LR_v = cortex.Vertex(sm_bestvertex_LR, subject=self.subject, cmap='magma', vmin=-0.5, vmax=1)
@@ -2030,7 +2030,7 @@ class CalcBestVertex():
             self.lr_best_vertex_map_sm = sm_bestvertex_LR
             self.lr_best_vertex_map_sm_v = sm_bestvertex_LR_v
 
-        if write_files == True:
+        if write_files:
 
             for i in ['lh', 'rh']:
                 if hasattr(self, f'{i}_best_vertex_map_sm'):
@@ -2227,7 +2227,7 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
         # update the filestore
         pycortex.set_ctx_path(p=self.cx_dir)
 
-        #----------------------------------------------------------------------------------------------------------------
+        #------------------------------------------------------------------------------------
         # Read in surface and pRF-data
 
         if isinstance(self.srf_file, str):
@@ -2246,7 +2246,7 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                 subject=self.subject, 
                 hemi="both")
         else:
-            if self.use_prf == True:
+            if self.use_prf:
                 if not os.path.exists(self.prf_file):
                     raise FileNotFoundError(f"Could not find with pRF-estimates '{self.prf_file}'")
 
@@ -2309,7 +2309,7 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                 if not os.path.exists(ctx_ses):
                     os.makedirs(ctx_ses, exist_ok=True)
 
-            #----------------------------------------------------------------------------------------------------------------
+            #------------------------------------------------------------------------------------
             # Set the cutoff criteria based on which you'd like to select a vertex
         
             check = False
@@ -2484,19 +2484,16 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                         for nn,el in zip(["vertex","coord","normal"],[vertex,coord,normal]):
                             utils.verbose(f" {nn}\t= {el}", self.verbose)
                             
-                        if self.use_prf == True:
+                        if self.use_prf:
 
                             if not self.srf:
                                 # print parameters and make plot
                                 cmd =f"call_prfinfo -s {self.subject} -v {vertex} --{tag} --{self.model} -p {self.prf_file} --plot {v1_flag}"
-                                print(cmd)
-                                os.system(cmd)
+                                utils.run_shell_wrapper(cmd, verb=True)
                             else:
                                 # print parameters
                                 cmd = f"call_prfinfo -s {self.subject} -v {vertex} --{tag} --{self.model} -p {self.prf_file}"
-
-                                print(cmd)
-                                os.system(cmd)
+                                utils.run_shell_wrapper(cmd, verb=True)
 
                                 # compile output name for figures
                                 base = f"{self.subject}"
@@ -2525,11 +2522,11 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                     if self.webshow:
                         self.tkr = transform.ctx2tkr(self.subject, coord=[self.lh_best_vertex_coord,self.rh_best_vertex_coord])
                         self.tkr_ = {'lh': self.tkr[0], 'rh': self.tkr[1]}
-                        os.system(f"freeview -v {self.orig} -f {self.lh_fid}:edgecolor=green {self.rh_fid}:edgecolor=green  --ras {round(self.tkr_['lh'][0],2)} {round(self.tkr_['lh'][1],2)} {round(self.tkr_['lh'][2],2)} tkreg 2>/dev/null")
+                        utils.run_shell_wrapper(f"launch_freeview -v {self.orig} -f {self.lh_fid}:edgecolor=green {self.rh_fid}:edgecolor=green  --ras {round(self.tkr_['lh'][0],2)} {round(self.tkr_['lh'][1],2)} {round(self.tkr_['lh'][2],2)} tkreg 2>/dev/null", verb=True)
                     else:
                         utils.verbose("Verification with FreeView disabled", self.verbose)
 
-                    #----------------------------------------------------------------------------------------------------------------
+                    #------------------------------------------------------------------------------------
                     # Write out files if all is OK
                     happy = input("Happy with the position? (y/n): ")
                     if happy.lower() in ['y','yes']:
@@ -2574,7 +2571,7 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                 txt = "writing "+utils.color.BOLD+utils.color.GREEN+self.out+utils.color.END 
                 utils.verbose(txt, self.verbose)
 
-            #----------------------------------------------------------------------------------------------------------------
+            #------------------------------------------------------------------------------------
             # Get pRF-parameters from best vertices
             if not skip_prf_info:
                 if isinstance(self.prf_file, str):
@@ -2586,7 +2583,7 @@ class TargetVertex(CalcBestVertex,prf.VertexInfo):
                         if "ses" in list(ls_comps.keys()):
                             fbase += f"_ses-{ls_comps['ses']}"
 
-                        if self.model != None:
+                        if self.model is not None:
                             fbase += f'_model-{self.model}'
 
                         self.prf_bestvertex = opj(ctx_ses, f'{fbase}_desc-best_vertices.csv')
